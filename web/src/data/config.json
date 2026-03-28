@@ -1,0 +1,22 @@
+{
+  "id": "susanino",
+  "name": "Сусанинский район",
+  "fullName": "Сусанинский район Костромской области",
+  "description": "Край Ивана Сусанина — история, природа, традиции",
+  "center": { "lat": 58.15, "lng": 41.62 },
+  "bounds": [[57.9, 41.1], [58.4, 42.1]],
+  "map": {
+    "illustrationFile": "/images/map/placeholder-map.jpg",
+    "illustrationBounds": [[57.95, 41.15], [58.35, 42.05]],
+    "defaultZoom": 11,
+    "minZoom": 10,
+    "maxZoom": 16
+  },
+  "seo": {
+    "title": "Карта Сусанинского района — достопримечательности и интересные места",
+    "description": "Интерактивная карта достопримечательностей Сусанинского района Костромской области",
+    "ogImage": "/images/ui/og-cover.jpg"
+  },
+  "analytics": { "yandexMetrikaId": "" },
+  "contacts": { "telegram": "@susanino_map", "email": "" }
+}
