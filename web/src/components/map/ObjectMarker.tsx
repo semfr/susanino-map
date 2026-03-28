@@ -31,7 +31,10 @@ export default function ObjectMarker({ object }: ObjectMarkerProps) {
         fillOpacity: 0.9,
       }}
       eventHandlers={{
-        click: () => setSelectedObject(object),
+        click: () => {
+          console.log('Marker clicked:', object.name);
+          setSelectedObject(object);
+        },
       }}
     >
       <Tooltip direction="top" offset={[0, -12]} opacity={0.95}>

@@ -28,6 +28,7 @@ export default function RootLayout({
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <head>
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
         <link rel="manifest" href="/manifest.json" />
         <meta name="theme-color" content="#8B4513" />
       </head>

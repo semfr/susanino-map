@@ -36,6 +36,7 @@ export default function MapContainer() {
         minZoom={config.map.minZoom}
         maxZoom={config.map.maxZoom}
         className="h-full w-full"
+        attributionControl={false}
       >
         <TileLayer
           attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
