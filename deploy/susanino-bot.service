@@ -1,0 +1,15 @@
+[Unit]
+Description=Susanino Map Telegram Bot
+After=network.target
+
+[Service]
+Type=simple
+User=www-data
+WorkingDirectory=/opt/susanino-bot
+EnvironmentFile=/opt/susanino-bot/.env
+ExecStart=/opt/susanino-bot/venv/bin/python bot.py
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=multi-user.target
