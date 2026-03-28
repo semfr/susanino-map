@@ -2,6 +2,7 @@
 
 import dynamic from 'next/dynamic';
 import { MapProvider } from '@/hooks/useMapObjects';
+import BottomSheetWrapper from '@/components/map/BottomSheetWrapper';
 
 const MapContainer = dynamic(
   () => import('@/components/map/MapContainer'),
@@ -13,6 +14,7 @@ export default function Home() {
     <MapProvider>
       <main className="h-screen w-screen">
         <MapContainer />
+        <BottomSheetWrapper />
       </main>
     </MapProvider>
   );
