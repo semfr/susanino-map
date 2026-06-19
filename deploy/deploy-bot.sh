@@ -18,6 +18,8 @@ echo "== 2/7 Системный пользователь $SVC_USER =="
 id -u "$SVC_USER" >/dev/null 2>&1 || useradd --system --create-home --shell /usr/sbin/nologin "$SVC_USER"
 
 echo "== 3/7 Код (git clone/pull) =="
+# репозиторий принадлежит пользователю susanino, а скрипт бежит от root — разрешаем git
+git config --global --add safe.directory "$APP_DIR" 2>/dev/null || true
 if [ -d "$APP_DIR/.git" ]; then
   git -C "$APP_DIR" fetch --depth 1 origin master
   git -C "$APP_DIR" reset --hard origin/master
