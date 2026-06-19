@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { asset } from '@/lib/asset';
 import { getDefaultIllustration, objects } from '@/config/region';
 
@@ -117,6 +118,14 @@ export default function LandingHero({ onOpen }: LandingHeroProps) {
         >
           Открыть в Telegram
         </a>
+
+        <Link
+          href="/about"
+          className="mt-2.5 text-[12.5px] font-semibold underline-offset-4 hover:underline"
+          style={{ color: MUTED }}
+        >
+          О проекте
+        </Link>
       </div>
     </div>
   );
