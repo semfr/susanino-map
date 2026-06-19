@@ -62,6 +62,7 @@ export interface Photo {
   src: string;
   alt: string;
   isMain: boolean;
+  attribution?: string;
 }
 
 export interface ObjectContacts {

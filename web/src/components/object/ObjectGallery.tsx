@@ -30,6 +30,10 @@ export default function ObjectGallery({ photos, category, objectName }: ObjectGa
         />
       </div>
 
+      {mainPhoto.attribution && (
+        <p className="text-[11px] leading-tight text-gray-400">{mainPhoto.attribution}</p>
+      )}
+
       {/* Thumbnails */}
       {otherPhotos.length > 0 && (
         <div className="flex gap-2 overflow-x-auto pb-1">

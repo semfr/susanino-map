@@ -7,5 +7,6 @@ load_dotenv(Path(__file__).parent / ".env")
 
 BOT_TOKEN: str = os.environ["BOT_TOKEN"]
 
-# Директория с данными (относительно директории бота)
-DATA_DIR: Path = Path(__file__).parent.parent / "data"
+# Директория с данными: по умолчанию ../data относительно бота,
+# переопределяется переменной окружения DATA_DIR (для нестандартного размещения на сервере).
+DATA_DIR: Path = Path(os.environ.get("DATA_DIR") or (Path(__file__).parent.parent / "data"))

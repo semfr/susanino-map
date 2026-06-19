@@ -4,12 +4,15 @@ After=network.target
 
 [Service]
 Type=simple
-User=www-data
-WorkingDirectory=/opt/susanino-bot
-EnvironmentFile=/opt/susanino-bot/.env
-ExecStart=/opt/susanino-bot/venv/bin/python bot.py
+User=susanino
+WorkingDirectory=/opt/susanino-map/bot
+EnvironmentFile=/opt/susanino-map/bot/.env
+ExecStart=/opt/susanino-map/venv/bin/python bot.py
 Restart=always
 RestartSec=5
+# Базовый харденинг
+NoNewPrivileges=true
+PrivateTmp=true
 
 [Install]
 WantedBy=multi-user.target

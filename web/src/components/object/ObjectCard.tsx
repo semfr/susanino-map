@@ -33,6 +33,10 @@ export default function ObjectCard({ object }: ObjectCardProps) {
         )}
       </div>
 
+      {mainPhoto?.attribution && (
+        <p className="-mt-2 text-[11px] leading-tight text-gray-400">{mainPhoto.attribution}</p>
+      )}
+
       {/* Header */}
       <div className="flex flex-col gap-1.5">
         {/* Category badge */}

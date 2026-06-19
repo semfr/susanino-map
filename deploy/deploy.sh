@@ -1,12 +1,9 @@
-#!/bin/bash
-set -e
-cd "$(dirname "$0")/.."
-echo "=== Building web ==="
-cd web && npm run build && cd ..
-echo "=== Deploying to VPS ==="
-rsync -avz --delete web/out/ user@vps:/var/www/susanino-map/
-rsync -avz data/ user@vps:/opt/susanino-data/
-rsync -avz bot/ user@vps:/opt/susanino-bot/
-echo "=== Restarting bot ==="
-ssh user@vps "systemctl restart susanino-bot"
-echo "=== Done! ==="
+#!/usr/bin/env bash
+# УСТАРЕЛО — не использовать. Старый rsync-деплой выгружал на сервер всю папку bot/
+# (включая секрет bot_api.txt) и предполагал свой веб-сервер.
+# Теперь:
+#   - веб задеплоен на GitHub Pages (.github/workflows/deploy.yml);
+#   - бот деплоится на VPS из git без выгрузки секретов: deploy/deploy-bot.sh.
+# Инструкция: deploy/README.md
+echo "Этот скрипт устарел. Деплой бота: см. deploy/README.md (deploy/deploy-bot.sh на сервере)."
+exit 1

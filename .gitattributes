@@ -1,0 +1,4 @@
+# Шелл-скрипты и yaml — всегда LF (иначе ломаются на Linux-сервере/в CI)
+*.sh   text eol=lf
+*.yml  text eol=lf
+*.yaml text eol=lf
