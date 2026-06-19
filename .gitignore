@@ -7,3 +7,12 @@ __pycache__/
 *.pyc
 venv/
 .DS_Store
+
+# секрет бота (токен) — не коммитить
+bot_api.txt
+
+# кэш тестов
+.pytest_cache/
+
+# мёртвые тайлы лубка (перешли на ImageOverlay; генератор — tools/generate_tiles.py)
+/web/public/tiles/

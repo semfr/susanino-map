@@ -1,13 +1,21 @@
 'use client';
 
 import { useState } from 'react';
-import { MapContainer as LeafletMapContainer, TileLayer, useMapEvents } from 'react-leaflet';
-import { config } from '@/config/region';
+import {
+  MapContainer as LeafletMapContainer,
+  TileLayer,
+  ImageOverlay,
+  useMapEvents,
+} from 'react-leaflet';
+import L from 'leaflet';
+import { config, getDefaultIllustration } from '@/config/region';
 import { useMapObjects } from '@/hooks/useMapObjects';
-import ObjectMarker from './ObjectMarker';
-import IllustratedOverlay from './IllustratedOverlay';
-import MapControls from './MapControls';
+import GeoMapLayer from './GeoMapLayer';
+import UserLocationMarker from './UserLocationMarker';
+import IllustratedMapLayer from './IllustratedMapLayer';
+import MapModeSwitcher, { type MapMode } from './MapModeSwitcher';
 
+/** Следит за зумом — только в гео-режиме (zoom-фильтр объектов). */
 function ZoomWatcher() {
   const { setCurrentZoom } = useMapObjects();
 
@@ -21,36 +29,56 @@ function ZoomWatcher() {
 }
 
 export default function MapContainer() {
-  const { visibleObjects } = useMapObjects();
-  const [layerMode, setLayerMode] = useState<'map' | 'illustration'>('map');
+  const [mapMode, setMapMode] = useState<MapMode>('geo');
+  const illustration = getDefaultIllustration();
 
-  const toggleLayer = () => {
-    setLayerMode((prev) => (prev === 'map' ? 'illustration' : 'map'));
-  };
+  // Bounds лубка в CRS.Simple: [[minLat,minLng],[maxLat,maxLng]] = [[0,0],[H,W]].
+  // Верх изображения = maxLat (см. anchorToLatLng — инверсия по вертикали).
+  const illustrationBounds: [[number, number], [number, number]] = [
+    [0, 0],
+    [illustration.canvas.height, illustration.canvas.width],
+  ];
 
   return (
     <div className="relative h-full w-full">
-      <LeafletMapContainer
-        center={[config.center.lat, config.center.lng]}
-        zoom={config.map.defaultZoom}
-        minZoom={config.map.minZoom}
-        maxZoom={config.map.maxZoom}
-        className="h-full w-full"
-        attributionControl={false}
-      >
-        <TileLayer
-          attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-          url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-          opacity={layerMode === 'illustration' ? 0.3 : 1}
-        />
-        <IllustratedOverlay visible={layerMode === 'illustration'} />
-        <ZoomWatcher />
-        {visibleObjects.map((obj) => (
-          <ObjectMarker key={obj.id} object={obj} />
-        ))}
-      </LeafletMapContainer>
+      {mapMode === 'geo' ? (
+        <LeafletMapContainer
+          key="geo"
+          center={[config.center.lat, config.center.lng]}
+          zoom={config.map.defaultZoom}
+          minZoom={config.map.minZoom}
+          maxZoom={config.map.maxZoom}
+          className="h-full w-full"
+          attributionControl={false}
+        >
+          <TileLayer
+            attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+          />
+          <GeoMapLayer />
+          <UserLocationMarker />
+          <ZoomWatcher />
+        </LeafletMapContainer>
+      ) : (
+        <LeafletMapContainer
+          key="illustration"
+          crs={L.CRS.Simple}
+          bounds={illustrationBounds}
+          maxBounds={illustrationBounds}
+          minZoom={-3}
+          maxZoom={2}
+          className="h-full w-full"
+          attributionControl={false}
+        >
+          <ImageOverlay
+            url={`/images/map/${illustration.file}`}
+            bounds={illustrationBounds}
+          />
+          <IllustratedMapLayer illustration={illustration} />
+        </LeafletMapContainer>
+      )}
 
-      <MapControls mode={layerMode} onToggle={toggleLayer} />
+      <MapModeSwitcher mode={mapMode} onChange={setMapMode} />
     </div>
   );
 }

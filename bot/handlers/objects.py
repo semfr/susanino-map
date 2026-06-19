@@ -9,6 +9,8 @@ from aiogram.types import CallbackQuery, FSInputFile
 
 from keyboards.inline import object_actions_keyboard
 from services.data_loader import get_object_by_id
+from services.rich_message_builder import build_object_rich_message
+from services.rich_api import send_rich_message
 
 router = Router()
 
@@ -116,9 +118,24 @@ async def object_selected(callback: CallbackQuery) -> None:
         except Exception:
             pass
     else:
-        # Фото нет — редактируем текущее сообщение
-        await callback.message.edit_text(
-            text,
-            parse_mode="HTML",
-            reply_markup=keyboard,
+        # Фото нет — пробуем rich-карточку (Bot API 10.1) со встроенной картой,
+        # при любой ошибке откатываемся на обычное текстовое сообщение.
+        rich = build_object_rich_message(obj)
+        sent = await send_rich_message(
+            callback.bot,
+            callback.message.chat.id,
+            rich["html"],
+            keyboard,
         )
+        if sent:
+            # rich пришёл новым сообщением — убираем кнопки у предыдущего
+            try:
+                await callback.message.delete()
+            except Exception:
+                pass
+        else:
+            await callback.message.edit_text(
+                text,
+                parse_mode="HTML",
+                reply_markup=keyboard,
+            )

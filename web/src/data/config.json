@@ -10,7 +10,8 @@
     "illustrationBounds": [[57.95, 41.15], [58.35, 42.05]],
     "defaultZoom": 11,
     "minZoom": 10,
-    "maxZoom": 16
+    "maxZoom": 16,
+    "defaultIllustration": "guide-susanino"
   },
   "seo": {
     "title": "Карта Сусанинского района — достопримечательности и интересные места",

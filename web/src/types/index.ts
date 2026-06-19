@@ -9,6 +9,7 @@ export interface MapConfig {
   defaultZoom: number;
   minZoom: number;
   maxZoom: number;
+  defaultIllustration?: string;
 }
 
 export interface SeoConfig {
@@ -111,4 +112,13 @@ export interface MapObject {
     createdAt: string;
     updatedAt: string;
   };
+}
+
+export interface IllustrationAnchor { objectId: string; badge: number; x: number; y: number; }
+export interface IllustrationCanvas { width: number; height: number; }
+export interface IllustrationTiles { urlTemplate: string; tileSize: number; minZoom: number; maxZoom: number; }
+export interface Illustration {
+  id: string; title: string; subtitle?: string; artist?: string; file: string;
+  canvas: IllustrationCanvas; isDefault?: boolean; tiles?: IllustrationTiles;
+  anchors: IllustrationAnchor[]; meta?: Record<string, unknown>;
 }
