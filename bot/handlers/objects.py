@@ -89,6 +89,48 @@ def _find_local_photo(obj: dict) -> Path | None:
     return None
 
 
+async def send_object_card(message, obj: dict) -> None:
+    """
+    Отправляет карточку объекта НОВЫМ сообщением в чат `message`.
+
+    Переиспользуемый рендер (deep-link /start, обычный просмотр).
+    Логика выбора способа:
+      1. Есть локальное фото -> answer_photo с подписью.
+      2. Иначе -> rich-карточка (Bot API 10.1) со встроенной картой.
+      3. Если rich не поддержан -> обычное текстовое сообщение.
+
+    В отличие от callback-хэндлера здесь НЕ трогаем исходное сообщение
+    (нечего удалять/редактировать) — всегда answer() новым сообщением.
+    """
+    text = _build_object_text(obj)
+    keyboard = object_actions_keyboard(obj)
+    photo_path = _find_local_photo(obj)
+
+    if photo_path is not None:
+        await message.answer_photo(
+            photo=FSInputFile(str(photo_path)),
+            caption=text,
+            parse_mode="HTML",
+            reply_markup=keyboard,
+        )
+        return
+
+    # Фото нет — пробуем rich-карточку, при ошибке откат на текст.
+    rich = build_object_rich_message(obj)
+    sent = await send_rich_message(
+        message.bot,
+        message.chat.id,
+        rich["html"],
+        keyboard,
+    )
+    if not sent:
+        await message.answer(
+            text,
+            parse_mode="HTML",
+            reply_markup=keyboard,
+        )
+
+
 @router.callback_query(lambda c: c.data and c.data.startswith("obj:"))
 async def object_selected(callback: CallbackQuery) -> None:
     obj_id = callback.data.split(":", 1)[1]

@@ -6,6 +6,7 @@ import ObjectGallery from '@/components/object/ObjectGallery';
 import ObjectInfo from '@/components/object/ObjectInfo';
 import NavigateButton from '@/components/object/NavigateButton';
 import ShareButton from '@/components/object/ShareButton';
+import TelegramBotButton from '@/components/object/TelegramBotButton';
 
 interface PageProps {
   params: Promise<{ slug: string }>;
@@ -119,6 +120,8 @@ export default async function ObjectPage({ params }: PageProps) {
         {/* Actions */}
         <div className="space-y-3 pt-2">
           <NavigateButton object={obj} />
+
+          <TelegramBotButton objectId={obj.id} className="w-full" />
 
           <div className="flex gap-3">
             <Link

@@ -16,3 +16,6 @@ bot_api.txt
 
 # мёртвые тайлы лубка (перешли на ImageOverlay; генератор — tools/generate_tiles.py)
 /web/public/tiles/
+
+# генерируемое зеркало данных (канон — корневой data/, см. web/scripts/sync-data.mjs)
+/web/src/data/

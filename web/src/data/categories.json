@@ -1,9 +1,0 @@
-[
-  { "id": "museum", "name": "Музеи", "icon": "museum", "color": "#8B4513", "emoji": "🏛", "sortOrder": 1 },
-  { "id": "church", "name": "Храмы", "icon": "church", "color": "#DAA520", "emoji": "⛪", "sortOrder": 2 },
-  { "id": "nature", "name": "Природа", "icon": "tree", "color": "#228B22", "emoji": "🌿", "sortOrder": 3 },
-  { "id": "food", "name": "Где поесть", "icon": "utensils", "color": "#CD5C5C", "emoji": "🍽", "sortOrder": 4 },
-  { "id": "stay", "name": "Где остановиться", "icon": "bed", "color": "#4682B4", "emoji": "🏠", "sortOrder": 5 },
-  { "id": "history", "name": "Исторические места", "icon": "landmark", "color": "#8B0000", "emoji": "📜", "sortOrder": 6 },
-  { "id": "craft", "name": "Ремёсла", "icon": "palette", "color": "#9370DB", "emoji": "🎨", "sortOrder": 7 }
-]

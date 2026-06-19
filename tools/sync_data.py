@@ -3,14 +3,13 @@
 """
 Single-source синхронизация данных карты Сусанино.
 
-Источник истины: web/src/data/
-Назначение (читает бот): data/  (DATA_DIR = bot/../data)
+КАНОН (источник истины): корневой data/  — его читает бот (DATA_DIR = bot/../data)
+и правит будущая админка через бота (вариант A: JSON + git).
+Назначение (генерируемое зеркало для статической сборки): web/src/data/
 
-Копирует:
-  - web/src/data/config.json      -> data/config.json
-  - web/src/data/categories.json  -> data/categories.json
-  - web/src/data/objects.json     -> data/objects.json
-  - web/src/data/illustrations/*  -> data/illustrations/* (вся папка)
+ВНИМАНИЕ: для веба это делается автоматически — `npm run dev` / `npm run build`
+вызывают `web/scripts/sync-data.mjs` (хуки predev/prebuild). Этот Python-скрипт —
+ручной эквивалент того же направления (на случай работы без Node).
 
 Копирование (не перемещение). Существующие файлы перезаписываются.
 """
@@ -20,8 +19,8 @@ import sys
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent      # .../susanino-map
-SRC_DIR = ROOT / "web" / "src" / "data"             # источник истины
-DST_DIR = ROOT / "data"                             # корневой data/ (читает бот)
+SRC_DIR = ROOT / "data"                             # КАНОН (корневой data/)
+DST_DIR = ROOT / "web" / "src" / "data"             # зеркало для сборки
 
 JSON_FILES = ["config.json", "categories.json", "objects.json"]
 ILLUSTRATIONS = "illustrations"
@@ -29,12 +28,12 @@ ILLUSTRATIONS = "illustrations"
 
 def main() -> int:
     if not SRC_DIR.exists():
-        print(f"ОШИБКА: источник не найден: {SRC_DIR}")
+        print(f"ОШИБКА: канон не найден: {SRC_DIR}")
         return 1
 
     DST_DIR.mkdir(parents=True, exist_ok=True)
-    print(f"Источник: {SRC_DIR}")
-    print(f"Назначение: {DST_DIR}")
+    print(f"Канон:      {SRC_DIR}")
+    print(f"Зеркало:    {DST_DIR}")
     print("-" * 60)
 
     copied_files = 0
@@ -43,7 +42,7 @@ def main() -> int:
     for name in JSON_FILES:
         src = SRC_DIR / name
         if not src.exists():
-            print(f"  ПРОПУСК (нет в источнике): {name}")
+            print(f"  ПРОПУСК (нет в каноне): {name}")
             continue
         dst = DST_DIR / name
         shutil.copy2(src, dst)
@@ -54,7 +53,6 @@ def main() -> int:
     src_ill = SRC_DIR / ILLUSTRATIONS
     if src_ill.exists() and src_ill.is_dir():
         dst_ill = DST_DIR / ILLUSTRATIONS
-        # dirs_exist_ok=True — перезаписываем поверх существующей папки.
         shutil.copytree(src_ill, dst_ill, dirs_exist_ok=True)
         ill_count = sum(1 for _ in dst_ill.rglob("*") if _.is_file())
         print(f"  OK dir : {ILLUSTRATIONS}/ -> {dst_ill} ({ill_count} файлов)")

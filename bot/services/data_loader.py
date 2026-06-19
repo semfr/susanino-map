@@ -53,3 +53,29 @@ def get_object_by_id(obj_id: str) -> dict | None:
 def get_objects_by_category(category_id: str) -> list[dict]:
     """Возвращает список объектов заданной категории."""
     return _objects_by_category.get(category_id, [])
+
+
+def update_objects(new_objects: list[dict]) -> None:
+    """
+    Обновляет данные объектов «на лету» после успешной публикации в GitHub.
+
+    Перестраивает in-memory список и индексы (_objects, _objects_by_id,
+    _objects_by_category) и переписывает локальный DATA_DIR/objects.json
+    (utf-8, ensure_ascii=False, indent=2), чтобы локальная копия совпадала
+    с каноном до следующего `git reset --hard origin/master`.
+
+    Вызывается только ПОСЛЕ успешного коммита (см. спек B3, атомарность).
+    """
+    global _objects, _objects_by_id, _objects_by_category
+
+    _objects = new_objects
+    _objects_by_id = {obj["id"]: obj for obj in _objects}
+
+    _objects_by_category = {}
+    for obj in _objects:
+        cat_id = obj.get("categoryId", "")
+        _objects_by_category.setdefault(cat_id, []).append(obj)
+
+    path = DATA_DIR / "objects.json"
+    with open(path, "w", encoding="utf-8") as f:
+        json.dump(_objects, f, ensure_ascii=False, indent=2)

@@ -40,11 +40,13 @@ def object_actions_keyboard(obj: dict) -> InlineKeyboardMarkup:
     Клавиатура действий для конкретного объекта.
     Кнопки: [На сайте] [Маршрут] [Назад к списку]
     """
+    from config import SITE_BASE_URL  # лениво: config читает os.environ при импорте
+
     builder = InlineKeyboardBuilder()
 
-    # Ссылка на страницу объекта
+    # Ссылка на страницу объекта на сайте (базовый URL — из конфига)
     slug = obj.get("slug", obj["id"])
-    site_url = f"https://susanino-map.ru/object/{slug}"
+    site_url = f"{SITE_BASE_URL}/object/{slug}"
     builder.button(text="🌐 На сайте", url=site_url)
 
     # Ссылка на Яндекс.Карты (маршрут)

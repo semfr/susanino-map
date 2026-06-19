@@ -41,6 +41,8 @@ journalctl -u susanino-bot -f      # логи
 
 ### Данные
 Бот читает `config.json/categories.json/objects.json` из `DATA_DIR`
-(по умолчанию `/opt/susanino-map/data`). Источник истины — `web/src/data/*`;
-синхронизация в корневой `data/` делается локально `python tools/sync_data.py`
-перед коммитом. На сервер данные приезжают вместе с git-pull.
+(по умолчанию `/opt/susanino-map/data`). **Источник истины (канон) — корневой `data/`**:
+его правит разработчик и будущая админка через бота (вариант A: JSON + git).
+Веб-зеркало `web/src/data/*` генерируется автоматически на `npm run dev`/`build`
+(`web/scripts/sync-data.mjs`). На сервер данные приезжают вместе с git-pull —
+боту отдельная синхронизация не нужна (он читает канон напрямую).

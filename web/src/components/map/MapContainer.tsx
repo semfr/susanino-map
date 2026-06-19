@@ -10,11 +10,12 @@ import {
 import L from 'leaflet';
 import { config, getDefaultIllustration } from '@/config/region';
 import { asset } from '@/lib/asset';
+import { resolveInitialMapMode, type MapMode } from '@/lib/mapMode';
 import { useMapObjects } from '@/hooks/useMapObjects';
 import GeoMapLayer from './GeoMapLayer';
 import UserLocationMarker from './UserLocationMarker';
 import IllustratedMapLayer from './IllustratedMapLayer';
-import MapModeSwitcher, { type MapMode } from './MapModeSwitcher';
+import MapModeSwitcher from './MapModeSwitcher';
 
 /** Следит за зумом — только в гео-режиме (zoom-фильтр объектов). */
 function ZoomWatcher() {
@@ -30,8 +31,9 @@ function ZoomWatcher() {
 }
 
 export default function MapContainer() {
-  const [mapMode, setMapMode] = useState<MapMode>('geo');
   const illustration = getDefaultIllustration();
+  // Старт в режиме лубка (узнаваемое ядро); резолвер откатится на навигатор, если иллюстраций нет.
+  const [mapMode, setMapMode] = useState<MapMode>(() => resolveInitialMapMode(illustration));
 
   // Bounds лубка в CRS.Simple: [[minLat,minLng],[maxLat,maxLng]] = [[0,0],[H,W]].
   // Верх изображения = maxLat (см. anchorToLatLng — инверсия по вертикали).
@@ -66,6 +68,7 @@ export default function MapContainer() {
           crs={L.CRS.Simple}
           bounds={illustrationBounds}
           maxBounds={illustrationBounds}
+          maxBoundsViscosity={1.0}
           minZoom={-3}
           maxZoom={2}
           className="h-full w-full"

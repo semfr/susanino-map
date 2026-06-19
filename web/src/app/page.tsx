@@ -1,10 +1,12 @@
 'use client';
 
+import { useState } from 'react';
 import dynamic from 'next/dynamic';
 import Link from 'next/link';
 import { MapProvider } from '@/hooks/useMapObjects';
 import CategoryFilter from '@/components/map/CategoryFilter';
 import BottomSheetWrapper from '@/components/map/BottomSheetWrapper';
+import LandingHero from '@/components/LandingHero';
 
 // Leaflet тянет browser-only API (window), поэтому только на клиенте.
 const MapView = dynamic(() => import('@/components/map/MapContainer'), {
@@ -17,18 +19,27 @@ const MapView = dynamic(() => import('@/components/map/MapContainer'), {
 });
 
 export default function Home() {
+  // Старт — лендинг-герой; «Открыть карту» открывает интерактивную карту.
+  const [started, setStarted] = useState(false);
+
   return (
     <MapProvider>
       <main className="h-screen w-screen relative">
-        <MapView />
-        <Link
-          href="/catalog"
-          className="absolute top-4 right-4 z-[500] flex items-center gap-1.5 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-stone-700 shadow-md"
-        >
-          <span>☰ Список</span>
-        </Link>
-        <CategoryFilter />
-        <BottomSheetWrapper />
+        {!started ? (
+          <LandingHero onOpen={() => setStarted(true)} />
+        ) : (
+          <>
+            <MapView />
+            <Link
+              href="/catalog"
+              className="absolute top-4 right-4 z-[500] flex items-center gap-1.5 px-4 py-2 bg-white/90 backdrop-blur-sm rounded-full text-sm font-medium text-stone-700 shadow-md"
+            >
+              <span>☰ Список</span>
+            </Link>
+            <CategoryFilter />
+            <BottomSheetWrapper />
+          </>
+        )}
       </main>
     </MapProvider>
   );

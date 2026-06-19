@@ -1,6 +1,7 @@
 'use client';
 
-export type MapMode = 'geo' | 'illustration';
+import type { MapMode } from '@/lib/mapMode';
+export type { MapMode };
 
 interface MapModeSwitcherProps {
   mode: MapMode;
@@ -14,12 +15,12 @@ interface MapModeSwitcherProps {
 export default function MapModeSwitcher({ mode, onChange }: MapModeSwitcherProps) {
   const baseBtn =
     'flex items-center gap-1.5 px-3 py-2 text-sm font-medium transition-colors';
-  const activeBtn = 'bg-stone-800 text-white';
+  const activeBtn = 'bg-[#2d5a3d] text-white';
   const inactiveBtn = 'bg-white text-stone-700 hover:bg-stone-50 active:bg-stone-100';
 
   return (
     <div
-      className="absolute bottom-4 left-1/2 -translate-x-1/2 z-[1000] flex overflow-hidden rounded-full border border-stone-200 shadow-md"
+      className="absolute bottom-16 left-1/2 -translate-x-1/2 z-[1000] flex overflow-hidden rounded-full border border-stone-200 shadow-md"
       style={{ zIndex: 1000 }}
     >
       <button

@@ -14,7 +14,7 @@ from aiogram.enums import ParseMode
 from aiogram.client.default import DefaultBotProperties
 
 from config import BOT_TOKEN
-from handlers import start, categories, objects, nearby
+from handlers import start, categories, objects, nearby, inline, admin
 
 logging.basicConfig(
     level=logging.INFO,
@@ -28,13 +28,18 @@ async def main() -> None:
     dp = Dispatcher()
 
     # Подключаем роутеры (порядок важен: сначала более специфичные)
+    dp.include_router(admin.router)
     dp.include_router(start.router)
     dp.include_router(nearby.router)
     dp.include_router(categories.router)
     dp.include_router(objects.router)
+    dp.include_router(inline.router)
 
     logger.info("Запуск бота...")
-    await dp.start_polling(bot, allowed_updates=["message", "callback_query"])
+    await dp.start_polling(
+        bot,
+        allowed_updates=["message", "callback_query", "inline_query"],
+    )
 
 
 if __name__ == "__main__":

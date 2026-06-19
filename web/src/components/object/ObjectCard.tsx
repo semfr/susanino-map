@@ -4,6 +4,7 @@ import { asset } from '@/lib/asset';
 import { useMapObjects } from '@/hooks/useMapObjects';
 import ObjectInfo from './ObjectInfo';
 import NavigateButton from './NavigateButton';
+import TelegramBotButton from './TelegramBotButton';
 import type { MapObject } from '@/types';
 
 interface ObjectCardProps {
@@ -63,6 +64,9 @@ export default function ObjectCard({ object }: ObjectCardProps) {
 
       {/* Navigate button */}
       <NavigateButton object={object} />
+
+      {/* Telegram-бот deep-link */}
+      <TelegramBotButton objectId={object.id} className="w-full" />
     </div>
   );
 }

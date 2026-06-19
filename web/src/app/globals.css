@@ -3,6 +3,14 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* Палитра «Календарь русской природы» (фирменный стиль карты) */
+  --kal-paper: #f5f4f0;
+  --kal-forest: #2d5a3d;
+  --kal-terra: #8b3a2a;
+  --kal-ink: #1a1916;
+  --kal-line: #d8d5cc;
+  --kal-muted: #6b675c;
 }
 
 @theme inline {
@@ -22,5 +30,5 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body), "Nunito", system-ui, sans-serif;
 }
