@@ -6,6 +6,7 @@ from aiogram.types import CallbackQuery
 
 from keyboards.inline import categories_keyboard, objects_keyboard
 from services.data_loader import get_categories, get_objects_by_category
+from handlers.ui import replace_message
 
 router = Router()
 
@@ -30,9 +31,10 @@ async def category_selected(callback: CallbackQuery) -> None:
 
     if not objects:
         await callback.answer()
-        await callback.message.edit_text(
+        # replace_message: карточка объекта могла быть photo/rich — edit_text бы упал.
+        await replace_message(
+            callback.message,
             f"{cat.get('emoji', '')} <b>{cat['name']}</b>\n\nОбъектов пока нет.",
-            parse_mode="HTML",
             reply_markup=categories_keyboard(),
         )
         return
@@ -41,9 +43,11 @@ async def category_selected(callback: CallbackQuery) -> None:
     text = f"{emoji} <b>{cat['name']}</b>\n\nОбъектов: {len(objects)}"
 
     await callback.answer()
-    await callback.message.edit_text(
+    # replace_message: «Назад к списку» приходит с карточки объекта (photo/rich),
+    # у которой нет текста — поэтому не edit_text, а безопасная замена сообщения.
+    await replace_message(
+        callback.message,
         text,
-        parse_mode="HTML",
         reply_markup=objects_keyboard(objects),
     )
 
@@ -51,7 +55,8 @@ async def category_selected(callback: CallbackQuery) -> None:
 @router.callback_query(lambda c: c.data == "back:categories")
 async def back_to_categories(callback: CallbackQuery) -> None:
     await callback.answer()
-    await callback.message.edit_text(
+    await replace_message(
+        callback.message,
         "Выберите категорию:",
         reply_markup=categories_keyboard(),
     )
