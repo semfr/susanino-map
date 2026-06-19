@@ -22,6 +22,18 @@ export default function RootLayout({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const basePath = process.env.NEXT_PUBLIC_BASE_PATH || '';
+  // На GitHub Pages (подпуть) SW отключаем для теста: пути в sw.js абсолютные,
+  // под подпутём кэш некорректен. Офлайн вернём при деплое на свой домен.
+  const swScript = basePath
+    ? ''
+    : `
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/sw.js').catch(function() {});
+    });
+  }
+`;
   return (
     <html
       lang="ru"
@@ -29,18 +41,12 @@ export default function RootLayout({
     >
       <head>
         <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-        <link rel="manifest" href="/manifest.json" />
+        <link rel="manifest" href={`${basePath}/manifest.json`} />
         <meta name="theme-color" content="#8B4513" />
       </head>
       <body className="min-h-full flex flex-col">
         {children}
-        <script dangerouslySetInnerHTML={{ __html: `
-  if ('serviceWorker' in navigator) {
-    window.addEventListener('load', function() {
-      navigator.serviceWorker.register('/sw.js').catch(function() {});
-    });
-  }
-`}} />
+        {swScript ? <script dangerouslySetInnerHTML={{ __html: swScript }} /> : null}
       </body>
     </html>
   );

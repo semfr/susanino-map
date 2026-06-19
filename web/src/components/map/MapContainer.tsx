@@ -9,6 +9,7 @@ import {
 } from 'react-leaflet';
 import L from 'leaflet';
 import { config, getDefaultIllustration } from '@/config/region';
+import { asset } from '@/lib/asset';
 import { useMapObjects } from '@/hooks/useMapObjects';
 import GeoMapLayer from './GeoMapLayer';
 import UserLocationMarker from './UserLocationMarker';
@@ -71,7 +72,7 @@ export default function MapContainer() {
           attributionControl={false}
         >
           <ImageOverlay
-            url={`/images/map/${illustration.file}`}
+            url={asset(`/images/map/${illustration.file}`)}
             bounds={illustrationBounds}
           />
           <IllustratedMapLayer illustration={illustration} />

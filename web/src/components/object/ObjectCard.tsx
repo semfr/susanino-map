@@ -1,6 +1,6 @@
 'use client';
 
-import Image from 'next/image';
+import { asset } from '@/lib/asset';
 import { useMapObjects } from '@/hooks/useMapObjects';
 import ObjectInfo from './ObjectInfo';
 import NavigateButton from './NavigateButton';
@@ -21,12 +21,10 @@ export default function ObjectCard({ object }: ObjectCardProps) {
       {/* Photo */}
       <div className="relative w-full h-48 rounded-xl overflow-hidden bg-gray-100 shrink-0">
         {mainPhoto ? (
-          <Image
-            src={mainPhoto.src}
+          <img
+            src={asset(mainPhoto.src)}
             alt={mainPhoto.alt}
-            fill
-            className="object-cover"
-            unoptimized
+            className="w-full h-full object-cover"
           />
         ) : (
           <div className="flex items-center justify-center h-full text-4xl text-gray-300">

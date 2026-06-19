@@ -1,4 +1,5 @@
 import type { Photo, Category } from '@/types';
+import { asset } from '@/lib/asset';
 
 interface ObjectGalleryProps {
   photos: Photo[];
@@ -23,7 +24,7 @@ export default function ObjectGallery({ photos, category, objectName }: ObjectGa
       {/* Main photo */}
       <div className="relative w-full aspect-[4/3] rounded-xl overflow-hidden bg-gray-100">
         <img
-          src={mainPhoto.src}
+          src={asset(mainPhoto.src)}
           alt={mainPhoto.alt || objectName}
           className="w-full h-full object-cover"
         />
@@ -38,7 +39,7 @@ export default function ObjectGallery({ photos, category, objectName }: ObjectGa
               className="relative shrink-0 w-20 h-20 rounded-lg overflow-hidden bg-gray-100"
             >
               <img
-                src={photo.src}
+                src={asset(photo.src)}
                 alt={photo.alt || `${objectName} — фото ${idx + 2}`}
                 className="w-full h-full object-cover"
               />
