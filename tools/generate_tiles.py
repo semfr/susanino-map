@@ -30,7 +30,7 @@ Image.MAX_IMAGE_PIXELS = None
 
 # --- Пути ---
 ROOT = Path(__file__).resolve().parent.parent          # .../susanino-map
-SOURCE = ROOT.parent / "guide_susanino.jpg"            # .../Карта Сусанино/guide_susanino.jpg
+SOURCE = ROOT.parent / "work" / "guide_susanino.jpg"   # .../Карта Сусанино/work/guide_susanino.jpg (исходник перенесён в work/)
 OUT_DIR = ROOT / "web" / "public" / "tiles" / "lubok"  # выход тайлов
 
 # --- Параметры пирамиды ---
