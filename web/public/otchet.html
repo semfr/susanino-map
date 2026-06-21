@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Путеводитель по региону — итоговый отчёт проекта</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Zilla+Slab:wght@500;600;700&family=PT+Sans:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#F6F8F8; --snow:#EEF2F2; --ink:#1E2A2E; --ink-soft:#41514F;
+    --green:#3E6B4F; --green-d:#2C4F3A; --ochre:#C08A2E; --ochre-d:#9A6C18;
+    --sky:#6E8CA0; --rust:#B0463C; --grey:#8A8F8C;
+    --line:#CFD7D5; --line-soft:#E1E7E5;
+    --card:#FFFFFF;
+    --shadow:0 1px 2px rgba(30,42,46,.05),0 6px 24px rgba(30,42,46,.06);
+    --side:300px;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  @media (prefers-reduced-motion:reduce){html{scroll-behavior:auto} *{transition:none!important;animation:none!important}}
+  body{
+    margin:0;background:var(--paper);color:var(--ink);
+    font-family:"PT Sans",-apple-system,Segoe UI,Roboto,sans-serif;
+    font-size:17px;line-height:1.62;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3,h4{font-family:"Zilla Slab",Georgia,serif;font-weight:700;line-height:1.15;color:var(--ink);margin:0}
+  a{color:var(--green-d)}
+  ::selection{background:#cfe0d4}
+
+  /* layout */
+  .wrap{display:flex;min-height:100vh}
+  .side{
+    width:var(--side);flex:0 0 var(--side);position:sticky;top:0;height:100vh;
+    background:linear-gradient(180deg,#20302E 0%,#1A2826 100%);color:#DDE6E2;
+    padding:28px 22px;overflow-y:auto;border-right:1px solid #16201E;
+  }
+  .main{flex:1;min-width:0;max-width:980px;margin:0 auto;padding:0 clamp(20px,5vw,64px)}
+
+  /* sidebar */
+  .brand{font-family:"Zilla Slab";font-weight:700;font-size:20px;color:#fff;letter-spacing:.2px;line-height:1.2}
+  .brand b{color:var(--ochre)}
+  .brand-sub{font-size:12.5px;color:#9FB2AC;margin-top:6px;line-height:1.4}
+  .search{margin:20px 0 14px}
+  .search input{
+    width:100%;padding:10px 12px;border-radius:9px;border:1px solid #33453F;
+    background:#16221F;color:#EAF1EE;font-family:inherit;font-size:14px;
+  }
+  .search input:focus{outline:2px solid var(--ochre);border-color:transparent}
+  .search input::placeholder{color:#6F827C}
+  nav.toc{margin-top:6px}
+  nav.toc ol{list-style:none;margin:0;padding:0;counter-reset:s}
+  nav.toc li{counter-increment:s;margin:1px 0}
+  nav.toc a{
+    display:flex;gap:9px;align-items:baseline;text-decoration:none;color:#C2D0CB;
+    font-size:14px;padding:7px 9px;border-radius:7px;border-left:2px solid transparent;
+  }
+  nav.toc a::before{content:counter(s,decimal-leading-zero);color:#6F827C;font-size:11px;font-family:"PT Sans";min-width:20px}
+  nav.toc a:hover{background:#1E2D2A;color:#fff}
+  nav.toc a.active{background:#22332F;color:#fff;border-left-color:var(--ochre)}
+  nav.toc a.active::before{color:var(--ochre)}
+  nav.toc li.hide{display:none}
+  .side-foot{margin-top:22px;padding-top:16px;border-top:1px solid #2A3A36;font-size:11.5px;color:#7E908A;line-height:1.5}
+
+  /* mobile top bar + drawer: hidden on desktop, shown only in mobile media query */
+  .topbar{display:none}
+  .drawer{display:none}
+
+  /* hero */
+  header.hero{padding:72px 0 40px;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:12px;letter-spacing:.16em;text-transform:uppercase;color:var(--green);font-weight:700}
+  header.hero h1{font-size:clamp(34px,5.4vw,58px);margin:14px 0 0;letter-spacing:-.5px}
+  header.hero .lede{font-size:clamp(18px,2.2vw,21px);color:var(--ink-soft);margin-top:18px;max-width:62ch}
+  .hero-meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+  .pill{font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:30px;background:var(--snow);border:1px solid var(--line);color:var(--ink-soft)}
+  .pill.g{background:#E7F0EA;border-color:#CBE0D2;color:var(--green-d)}
+  .pill.o{background:#F7ECD6;border-color:#EAD6AC;color:var(--ochre-d)}
+
+  /* sections */
+  section{padding:54px 0;border-bottom:1px solid var(--line-soft);scroll-margin-top:18px}
+  section > .eyebrow{display:block;margin-bottom:8px}
+  section h2{font-size:clamp(26px,3.6vw,36px);letter-spacing:-.3px}
+  section h3{font-size:20px;margin:30px 0 8px;color:var(--green-d)}
+  section p{margin:12px 0;max-width:70ch}
+  .muted{color:var(--ink-soft)}
+  strong{color:var(--ink)}
+
+  ul.clean{margin:12px 0;padding:0;list-style:none;max-width:72ch}
+  ul.clean li{position:relative;padding:6px 0 6px 22px}
+  ul.clean li::before{content:"";position:absolute;left:2px;top:14px;width:7px;height:7px;border-radius:2px;background:var(--green);transform:rotate(45deg)}
+  ul.clean li.o::before{background:var(--ochre)}
+
+  /* generic cards grid */
+  .cards{display:grid;gap:16px;margin-top:20px}
+  .cards.two{grid-template-columns:repeat(2,1fr)}
+  .cards.three{grid-template-columns:repeat(3,1fr)}
+  .c{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 18px;box-shadow:var(--shadow)}
+  .c h4{font-size:16.5px}
+  .c p{font-size:14.5px;margin:8px 0 0;color:var(--ink-soft);max-width:none}
+  .tag{display:inline-block;font-size:11.5px;font-weight:700;padding:3px 9px;border-radius:20px;margin-bottom:8px}
+  .tag.g{background:#E7F0EA;color:var(--green-d)}
+  .tag.o{background:#F7ECD6;color:var(--ochre-d)}
+  .tag.s{background:#E6ECF0;color:#3C566B}
+  .tag.r{background:#F6E2DF;color:var(--rust)}
+
+  /* pipeline diagram */
+  .flow{display:flex;flex-direction:column;gap:0;margin:26px 0 6px;max-width:760px}
+  .node{position:relative;border-radius:13px;padding:15px 18px;border:1.5px solid;background:var(--card);cursor:default;transition:transform .15s,box-shadow .15s}
+  .node:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+  .node .nt{font-family:"Zilla Slab";font-weight:700;font-size:16px}
+  .node .nd{font-size:13.5px;color:var(--ink-soft);margin-top:3px;line-height:1.45}
+  .node.found{border-color:var(--sky);background:#EEF3F6}
+  .node.honest{border-color:var(--ochre);background:#FBF1DD}
+  .node.group{border-color:var(--green);background:#EAF2EC}
+  .node.calc{border-color:#7C6BA8;background:#F0ECF7}
+  .node.engine{border-color:var(--rust);background:#FBECE9;padding:18px}
+  .node.engine .nt{font-size:18px;color:var(--rust)}
+  .node.result{border-color:var(--sky);background:#EEF3F6}
+  .node.out{border-color:var(--grey);background:#F1F3F2}
+  .node.map{border-color:var(--ochre);background:#FBF6E8}
+  .arrow{align-self:center;width:2px;height:20px;background:var(--line);position:relative}
+  .arrow::after{content:"";position:absolute;bottom:-1px;left:-4px;border-left:5px solid transparent;border-right:5px solid transparent;border-top:7px solid var(--line)}
+
+  /* mode toggle */
+  .toggle{display:inline-flex;background:var(--snow);border:1px solid var(--line);border-radius:11px;padding:4px;margin:18px 0 4px;gap:4px}
+  .toggle button{font-family:inherit;font-size:14px;font-weight:700;border:0;background:transparent;color:var(--ink-soft);padding:9px 16px;border-radius:8px;cursor:pointer}
+  .toggle button.on{background:var(--green);color:#fff}
+  .mode-panel{display:none;margin-top:6px}
+  .mode-panel.on{display:block}
+
+  /* lessons */
+  .lessons{counter-reset:l;display:grid;gap:12px;margin-top:18px;max-width:760px}
+  .lesson{display:flex;gap:14px;background:var(--card);border:1px solid var(--line);border-left:4px solid var(--ochre);border-radius:0 12px 12px 0;padding:14px 16px;counter-increment:l}
+  .lesson::before{content:counter(l);font-family:"Zilla Slab";font-weight:700;font-size:22px;color:var(--ochre);min-width:24px}
+  .lesson b{display:block;margin-bottom:2px}
+  .lesson span{font-size:14.5px;color:var(--ink-soft)}
+
+  /* база точек */
+  .baza-tools{position:sticky;top:0;z-index:5;background:var(--paper);padding:14px 0 12px;border-bottom:1px solid var(--line-soft);margin-bottom:6px}
+  .baza-search{width:100%;padding:12px 14px;border-radius:11px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;background:#fff}
+  .baza-search:focus{outline:2px solid var(--green);border-color:transparent}
+  .chips{display:flex;flex-wrap:wrap;gap:7px;margin-top:11px}
+  .chip{font-family:inherit;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:20px;border:1px solid var(--line);background:#fff;color:var(--ink-soft);cursor:pointer}
+  .chip:hover{border-color:var(--green)}
+  .chip.on{background:var(--ink);color:#fff;border-color:var(--ink)}
+  .chips .lab{align-self:center;font-size:11.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--grey);font-weight:700;margin-right:2px}
+  .count{font-size:13.5px;color:var(--ink-soft);margin-top:10px}
+  .count b{color:var(--green-d)}
+
+  /* segmentation chart */
+  .chart{margin:16px 0 4px;display:grid;gap:6px;max-width:560px}
+  .bar{display:grid;grid-template-columns:120px 1fr 30px;align-items:center;gap:10px;font-size:13px}
+  .bar .bn{color:var(--ink-soft);text-align:right;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .bar .bt{height:16px;border-radius:5px;background:var(--green);min-width:2px;transition:width .35s}
+  .bar .bv{font-weight:700;color:var(--ink)}
+
+  /* points grid */
+  #points{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+  .pt{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:16px;box-shadow:var(--shadow);display:flex;flex-direction:column}
+  .pt-top{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:9px;align-items:center}
+  .badge{font-size:11px;font-weight:700;padding:3px 9px;border-radius:18px;white-space:nowrap}
+  .b-anchor{background:var(--green);color:#fff}
+  .b-companion{background:#E6ECF0;color:#3C566B}
+  .b-reserve{background:var(--snow);color:var(--ink-soft);border:1px solid var(--line)}
+  .b-service{background:#F7ECD6;color:var(--ochre-d)}
+  .cat{font-size:11px;font-weight:700;color:var(--green-d);text-transform:uppercase;letter-spacing:.05em}
+  .st{margin-left:auto;font-size:10.5px;font-weight:700;padding:3px 8px;border-radius:18px}
+  .st.ok{background:#E7F0EA;color:var(--green-d)}
+  .st.moved{background:#F7ECD6;color:var(--ochre-d)}
+  .st.unconfirmed{background:#F6E2DF;color:var(--rust)}
+  .st.lost{background:#ECEEED;color:var(--grey)}
+  .st.lead{background:#E6ECF0;color:#3C566B}
+  .pt h4{font-size:16px;margin-top:2px}
+  .pt .desc{font-size:14px;color:var(--ink-soft);margin:8px 0 0}
+  .pt .meta{margin-top:11px;padding-top:10px;border-top:1px solid var(--line-soft);font-size:12.5px;color:var(--ink-soft);display:grid;gap:4px}
+  .pt .meta .row b{color:var(--ink);font-weight:700}
+  .coord{font-family:"PT Sans";cursor:pointer;border-bottom:1px dashed var(--sky);color:#3C566B}
+  .coord:hover{color:var(--green-d)}
+  .pt .honest{margin-top:8px;font-size:12.5px;background:#FBF4E4;border:1px solid #EAD9B2;border-radius:8px;padding:7px 10px;color:#7C5A14}
+  .pt .honest::before{content:"⚑ ";color:var(--ochre-d)}
+  .empty{grid-column:1/-1;text-align:center;color:var(--grey);padding:40px;font-size:15px}
+
+  /* honesty log */
+  .log{display:grid;gap:10px;margin-top:18px;max-width:780px}
+  .logitem{background:var(--card);border:1px solid var(--line);border-radius:11px;padding:13px 15px;font-size:14.5px}
+  .logitem b{color:var(--rust)}
+
+  .next-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:14px;margin-top:18px}
+  footer{padding:40px 0 70px;color:var(--ink-soft);font-size:13.5px}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:10px 18px;border-radius:10px;font-size:14px;opacity:0;pointer-events:none;transition:.25s;z-index:50}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  @media(max-width:900px){
+    .side{display:none}
+    .wrap{flex-direction:column}
+    .topbar{display:flex;position:sticky;top:0;z-index:30;background:#1C2A27;color:#fff;align-items:center;justify-content:space-between;height:56px;padding:0 18px}
+    .topbar .brand{font-size:16px}
+    .topbar button{background:#2C3E39;color:#fff;border:0;border-radius:8px;padding:9px 13px;font-family:inherit;font-weight:700;font-size:14px;cursor:pointer}
+    .drawer{display:none;position:fixed;left:0;right:0;top:56px;max-height:calc(100vh - 56px);overflow-y:auto;background:#1C2A27;color:#fff;padding:8px 16px 22px;z-index:25;box-shadow:0 16px 34px rgba(16,24,22,.45)}
+    .drawer.open{display:block}
+    .drawer .search{margin:10px 0}
+    .drawer nav.toc a{color:#cdd9d4}
+    .main{max-width:100%;padding:0 20px}
+    .baza-tools{top:56px;z-index:6;padding:10px 0 9px}
+    .baza-search{padding:10px 12px;font-size:14px}
+    .chips{flex-wrap:nowrap;overflow-x:auto;gap:6px;margin-top:8px;padding-bottom:3px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+    .chips::-webkit-scrollbar{display:none}
+    .chip{flex:0 0 auto;padding:5px 11px;font-size:12px}
+    .chips .lab{position:sticky;left:0;background:var(--paper);padding:2px 6px 2px 0;z-index:1}
+    .count{margin-top:7px;font-size:12.5px}
+    #points{grid-template-columns:1fr}
+    .cards.two,.cards.three,.next-grid{grid-template-columns:1fr}
+    header.hero{padding:40px 0 30px}
+    .bar{grid-template-columns:96px 1fr 26px}
+  }
+  /* точки→кусты figure */
+  .kusty-fig{margin:22px 0 10px;background:#fff;border:1px solid var(--line);border-radius:16px;padding:14px;box-shadow:var(--shadow);overflow-x:auto}
+  .kusty-fig svg{min-width:660px}
+  .kusty-fig figcaption{font-size:13px;color:var(--ink-soft);margin-top:10px;text-align:center}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">Путеводитель · <b>отчёт</b></div>
+  <button id="menuBtn" aria-expanded="false">Содержание</button>
+</div>
+<div class="drawer" id="drawer"></div>
+
+<div class="wrap">
+  <aside class="side">
+    <div class="brand">Региональный<br>путеводитель</div>
+    <div class="brand-sub">Итоговый отчёт мозгового штурма · пилот: Сусанинский район · 21.06.2026</div>
+    <div class="search"><input id="tocSearch" type="search" placeholder="Поиск по словам…" aria-label="Поиск по разделам"></div>
+    <nav class="toc" id="toc"></nav>
+    <div class="side-foot">Самодостаточная страница: работает офлайн, без внешних данных. Координаты точек кликабельны — копируются в буфер.</div>
+  </aside>
+
+  <main class="main">
+    <header class="hero" id="top">
+      <span class="eyebrow">Итоговый отчёт по проекту</span>
+      <h1>Глубокий путеводитель по одному региону</h1>
+      <p class="lede">Не очередной общий каталог по всей стране, а гид, который копает один регион вглубь — с честной информацией, неочевидными маршрутами и конструктором, считающим дорогу и деньги. Пилот — Сусанинский район Костромской области.</p>
+      <div class="hero-meta">
+        <span class="pill g">Аудитория: туристы и местные</span>
+        <span class="pill">Делаем сами</span>
+        <span class="pill o">Фишка: честный слой</span>
+        <span class="pill">Конструктор: смешанный режим</span>
+      </div>
+    </header>
+
+    <section id="kratko">
+      <span class="eyebrow">01 · Кратко</span>
+      <h2>В чём суть</h2>
+      <p>Крупные сервисы (RUSSPASS, izi.TRAVEL, Tripster, Путешествуем.рф) — широкие витрины с упором на бронирование. Они идут вширь и потому неизбежно мелкие по каждому конкретному региону. <strong>Наша ниша — глубина по одному региону:</strong> местная фактура, неочевидные маршруты, живой авторский отбор и то, чего у агрегаторов нет в принципе — честный слой.</p>
+      <p>Аудитория двойная: приезжие туристы и местные жители (запрос «куда выбраться в выходной») — на одном движке, но с разными витринами. Делаем сами, поэтому архитектура рассчитана на одного человека с помощником-программой, а не на большую команду.</p>
+    </section>
+
+    <section id="shema">
+      <span class="eyebrow">02 · Схема решения</span>
+      <h2>Как всё устроено</h2>
+      <p class="muted">Сначала — главная идея данных: отдельные точки группируются в кусты, то есть в куски размером в один день. Слева — что было (просто список), справа — что становится.</p>
+      <figure class="kusty-fig">
+        <svg style="width:100%;height:auto;display:block" preserveAspectRatio="xMidYMid meet" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1120 690"><rect width="1120" height="690" fill="#F6F8F8"/><text x="560.0" y="52" font-family="Zilla Slab, Georgia, serif" font-size="27" font-weight="bold" fill="#1E2A2E" text-anchor="middle">Точки → кусты: как из списка объектов получается маршрут</text><text x="560.0" y="80" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="15" font-weight="normal" fill="#41514F" text-anchor="middle">Один и тот же набор точек: слева — просто список, справа — собран в куски размером в день</text><rect x="40" y="104" width="470" height="360" rx="16" fill="#FFFFFF" fill-opacity="1" stroke="#CFD7D5" stroke-width="1.5"/><rect x="58" y="121" width="232.79999999999998" height="22" rx="11" fill="#ECEEED"/><text x="68" y="136" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="12" font-weight="bold" fill="#41514F" text-anchor="start">БЫЛО · просто точки на карте</text><circle cx="100" cy="174" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="170" cy="144" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="240" cy="204" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="310" cy="154" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="390" cy="194" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="450" cy="254" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="130" cy="254" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="210" cy="294" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="300" cy="284" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="380" cy="324" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="160" cy="354" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="260" cy="394" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="350" cy="394" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="430" cy="354" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="120" cy="414" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><circle cx="310" cy="234" r="7" fill="#C7CFCC" stroke="#A9B3AF" stroke-width="1"/><text x="275.0" y="446" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="13.5" font-weight="normal" fill="#8A8F8C" text-anchor="middle">непонятно, что важно, что рядом, что в какой день</text><path d="M 528 272.0 l 36 0 l 0 -10 l 22 22 l -22 22 l 0 -10 l -36 0 Z" fill="#9FB2AC"/><rect x="600" y="104" width="480" height="360" rx="16" fill="#FFFFFF" fill-opacity="1" stroke="#CFD7D5" stroke-width="1.5"/><rect x="618" y="121" width="301.2" height="22" rx="11" fill="#E7F0EA"/><text x="628" y="136" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="12" font-weight="bold" fill="#2C4F3A" text-anchor="start">СТАЛО · кусты (куски размером в день)</text><rect x="622" y="154" width="250" height="120" rx="18" fill="#3E6B4F" fill-opacity="0.05" stroke="#3E6B4F" stroke-width="2" stroke-dasharray="6 5"/><rect x="632" y="159" width="217.6" height="22" rx="11" fill="#E7F0EA"/><text x="642" y="174" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="12" font-weight="bold" fill="#2C4F3A" text-anchor="start">День 1 · Сусанино · пешком</text><rect x="895" y="169" width="165" height="155" rx="18" fill="#3E6B4F" fill-opacity="0.05" stroke="#6E8CA0" stroke-width="2" stroke-dasharray="6 5"/><rect x="905" y="174" width="134.0" height="22" rx="11" fill="#E6ECF0"/><text x="915" y="189" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="12" font-weight="bold" fill="#3C566B" text-anchor="start">День 2 · болото</text><rect x="630" y="299" width="230" height="130" rx="18" fill="#3E6B4F" fill-opacity="0.05" stroke="#C08A2E" stroke-width="2" stroke-dasharray="6 5"/><rect x="640" y="304" width="194.79999999999998" height="22" rx="11" fill="#F7ECD6"/><text x="650" y="319" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="12" font-weight="bold" fill="#9A6C18" text-anchor="start">День 3 · Медведки–озёра</text><circle cx="670" cy="219" r="11" fill="#3E6B4F" stroke="none" stroke-width="2"/><line x1="670" y1="208" x2="670" y2="192" stroke="#9A6C18" stroke-width="1.5"/><path d="M 670 192 L 681 196 L 670 200 Z" fill="#C08A2E"/><circle cx="720" cy="204" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><circle cx="765" cy="234" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><circle cx="810" cy="209" r="6" fill="#FFFFFF" stroke="#3E6B4F" stroke-width="2"/><circle cx="750" cy="254" r="6" fill="#FFFFFF" stroke="#3E6B4F" stroke-width="2"/><rect x="689.0" y="248.0" width="12" height="12" rx="2" fill="#C08A2E" transform="rotate(45 695 254)"/><circle cx="945" cy="244" r="11" fill="#3E6B4F" stroke="none" stroke-width="2"/><line x1="945" y1="233" x2="945" y2="217" stroke="#9A6C18" stroke-width="1.5"/><path d="M 945 217 L 956 221 L 945 225 Z" fill="#C08A2E"/><circle cx="1000" cy="229" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><circle cx="980" cy="289" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><circle cx="1030" cy="279" r="6" fill="#FFFFFF" stroke="#3E6B4F" stroke-width="2"/><rect x="929.0" y="293.0" width="12" height="12" rx="2" fill="#C08A2E" transform="rotate(45 935 299)"/><circle cx="690" cy="349" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><circle cx="750" cy="339" r="6" fill="#FFFFFF" stroke="#3E6B4F" stroke-width="2"/><circle cx="800" cy="374" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><circle cx="710" cy="399" r="6" fill="#FFFFFF" stroke="#3E6B4F" stroke-width="2"/><circle cx="775" cy="404" r="11" fill="#3E6B4F" stroke="none" stroke-width="2"/><rect x="654.0" y="378.0" width="12" height="12" rx="2" fill="#C08A2E" transform="rotate(45 660 384)"/><text x="40" y="506" font-family="Zilla Slab, Georgia, serif" font-size="15" font-weight="bold" fill="#1E2A2E" text-anchor="start">Условные обозначения</text><circle cx="52" cy="542" r="11" fill="#3E6B4F" stroke="none" stroke-width="2"/><text x="74" y="547" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="normal" fill="#41514F" text-anchor="start">Якорь — ради чего едут</text><circle cx="52" cy="574" r="8" fill="#6E8CA0" stroke="none" stroke-width="2"/><text x="74" y="579" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="normal" fill="#41514F" text-anchor="start">Спутник — хорошо заодно, по пути</text><circle cx="360" cy="542" r="6" fill="#FFFFFF" stroke="#3E6B4F" stroke-width="2"/><text x="382" y="547" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="normal" fill="#41514F" text-anchor="start">Запас — если осталось время</text><rect x="354.0" y="568.0" width="12" height="12" rx="2" fill="#C08A2E" transform="rotate(45 360 574)"/><text x="382" y="579" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="normal" fill="#41514F" text-anchor="start">Служебное — заправка, еда, связь</text><line x1="682" y1="548" x2="682" y2="532" stroke="#9A6C18" stroke-width="1.5"/><path d="M 682 532 L 693 536 L 682 540 Z" fill="#C08A2E"/><text x="702" y="547" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="normal" fill="#41514F" text-anchor="start">Честный слой — флаг у точки</text><rect x="682" y="564" width="20" height="14" rx="5" fill="#3E6B4F" fill-opacity="0.05" stroke="#3E6B4F" stroke-width="2" stroke-dasharray="6 5"/><text x="712" y="575" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14" font-weight="normal" fill="#41514F" text-anchor="start">Куст — один день пути</text><rect x="40" y="602" width="1040" height="44" rx="12" fill="#FBF1DD" stroke="#EAD6AC" stroke-width="1.5"/><text x="560.0" y="629" font-family="PT Sans, DejaVu Sans, sans-serif" font-size="14.5" font-weight="normal" fill="#7C5A14" text-anchor="middle">Конструктор собирает маршрут из кустов под запрос человека: сколько дней · кто едет · на чём · бюджет · что интересно</text></svg>
+        <figcaption>Концепция «точки → кусты»: из хаотичного списка объектов — готовые дневные маршруты с приоритетами.</figcaption>
+      </figure>
+      <h3>Конвейер системы</h3>
+      <p class="muted">А вот как это работает целиком — сверху вниз, одним потоком. Наведи на блок, чтобы увидеть пояснение.</p>
+      <div class="flow" id="flow"></div>
+    </section>
+
+    <section id="pozic">
+      <span class="eyebrow">03 · Позиционирование</span>
+      <h2>Принципы</h2>
+      <ul class="clean">
+        <li><strong>Один регион, но вглубь.</strong> Не соревнуемся с большими по охвату — копаем глубже всех на узком участке.</li>
+        <li><strong>Двойная аудитория.</strong> Один набор данных, разные подборки сверху: «приехать на выходные» и «куда съездить в субботу».</li>
+        <li class="o"><strong>Честность как товар.</strong> Где туалет, заправка, связь, наличка, какие дороги убитые — этого нет у агрегаторов, и именно это ценят.</li>
+        <li><strong>Простота вместо сложных систем.</strong> Соло-разработчику нужна надёжная логика, а не корпоративный движок.</li>
+      </ul>
+    </section>
+
+    <section id="arhitektura">
+      <span class="eyebrow">04 · Архитектура</span>
+      <h2>От точки к маршруту</h2>
+      <p><strong>Главный принцип:</strong> содержимое (база точек) хранится отдельно от оболочки. Один набор данных → и сайт, и офлайн-приложение, и печатный путеводитель, и телеграм-бот.</p>
+      <h3>Точка — атом системы</h3>
+      <p>Любой объект на карте, полезный туристу или местному. У каждой точки единый набор полей: координаты и тип, часы и сезон, стоимость, доступность, честный слой, описание (и аудио), отметка «кто и когда проверил».</p>
+      <h3>Уровни поверх точек</h3>
+      <div class="cards three">
+        <div class="c"><span class="tag g">Кусты</span><h4>Куски в один день</h4><p>Географические группы точек, которые осмысленно объехать за день. Внутри — роли: якорь, спутник, запас, служебное.</p></div>
+        <div class="c"><span class="tag s">Конструктор</span><h4>Сборка маршрута</h4><p>Подбирает кусты под запрос человека и раскладывает точки от якорей к запасным по лимиту времени.</p></div>
+        <div class="c"><span class="tag o">Витрины</span><h4>Готовые подборки</h4><p>«Сусанинские места за день», «Терема», «Гастро-петля» — фасады поверх одного движка.</p></div>
+      </div>
+    </section>
+
+    <section id="konstruktor">
+      <span class="eyebrow">05 · Конструктор</span>
+      <h2>Смешанный режим</h2>
+      <p>Программа строит маршрут не с нуля (это даёт бездушный результат), а из готовых кусков: <strong>алгоритм считает логистику, смысл задаёт автор.</strong> Обе версии — один движок с разной длиной поводка.</p>
+      <div class="toggle" role="tablist">
+        <button class="on" data-mode="ready" role="tab">Готовые маршруты</button>
+        <button data-mode="self" role="tab">Собери сам</button>
+      </div>
+      <div class="mode-panel on" id="m-ready">
+        <p class="muted">Режим по умолчанию. Человек берёт готовый маршрут — и тот сам подстраивается под него:</p>
+        <ul class="clean">
+          <li>деньги пересчитываются под компанию (бензин — на всех, входные — на каждого);</li>
+          <li>темп под состав: семья с детьми — меньше точек, больше буфера;</li>
+          <li>нет машины — недоступные точки отваливаются;</li>
+          <li>сезон и бюджет переключают точки автоматически.</li>
+        </ul>
+      </div>
+      <div class="mode-panel" id="m-self">
+        <p class="muted">Режим «для продвинутых» со страховками от ерунды:</p>
+        <ul class="clean">
+          <li>соединять можно только соседние кусты;</li>
+          <li>в каждом дне обязателен хотя бы один якорь;</li>
+          <li>тот же лимит времени и темп под состав;</li>
+          <li>предупреждения о кривых стыках между кустами.</li>
+        </ul>
+      </div>
+      <p style="margin-top:18px"><strong>Переход плавный:</strong> человек всегда стартует с готового маршрута, а как только правит его (убрать точку, добавить, поменять дни) — проваливается в сборку. «Собери сам» = «отредактируй готовый».</p>
+    </section>
+
+    <section id="karty">
+      <span class="eyebrow">06 · Карты и расчёты</span>
+      <h2>Яндекс — только для показа, расчёты — свои</h2>
+      <p>У Яндекс-карт лучшие в России данные о сельских дорогах и готовая навигация — их зовём для показа карты и кнопки «поехали». Но строить на них всё нельзя: это платно, лицензия ограничивает хранение данных, и работает только онлайн (а гид нужен там, где связи нет).</p>
+      <p class="muted"><strong>Выход:</strong> маршруты строятся из конечного набора точек, поэтому таблицу «сколько ехать от каждой до каждой» считаем один раз и храним у себя. Конструктор берёт готовые числа — мгновенно, бесплатно, офлайн.</p>
+    </section>
+
+    <section id="smeta">
+      <span class="eyebrow">07 · Смета и тайминг</span>
+      <h2>Честные деньги и часы</h2>
+      <ul class="clean">
+        <li><strong>Время в пути</strong> — по реальным дорогам (через таблицу расстояний), не по прямой.</li>
+        <li class="o"><strong>Смета — всегда вилкой</strong> и с делёжкой: бензин на компанию, входные на каждого. «Выходные на двоих — 8–14 тыс» честнее выдуманной точной цифры.</li>
+        <li><strong>Часы работы — жёсткое правило:</strong> точку «по записи» или «по расписанию» программа не поставит в нерабочее окно.</li>
+      </ul>
+    </section>
+
+    <section id="kusty">
+      <span class="eyebrow">08 · Проверка на кустах</span>
+      <h2>Лёгкий и тяжёлый случай</h2>
+      <p>Схему прогнали на двух контрастных кустах. <strong>Кострома-город</strong> — лёгкий: всё пешком в центре плюс Ипатьевский за рекой; вскрылись две вещи — ловушка двух «Снегурочек» в разных концах города и необходимость честно разводить «город пешком» и «за реку на машине».</p>
+      <p><strong>Сусанинский район</strong> — тяжёлый: сплошные перегоны, машина обязательна, инфраструктуры почти нет. Он добавил пять уроков, которых город не дал:</p>
+      <div class="lessons">
+        <div class="lesson"><b>Уметь сказать «нет»</b><span>Без машины по району — честный отказ, а не кривой маршрут на перекладных.</span></div>
+        <div class="lesson"><b>Свежесть честного слоя критична</b><span>Музей переехал из церкви в дом Божедомова (август 2025) — старые гиды врут. Нужно поле «проверено: дата».</span></div>
+        <div class="lesson"><b>Честный слой — выживание</b><span>Еды, заправок и связи по дороге нет; наличка обязательна.</span></div>
+        <div class="lesson"><b>Точки раздваиваются</b><span>Церковь была и видом, и музеем — теперь это две точки. Модель должна это терпеть.</span></div>
+        <div class="lesson"><b>Сезон и погода — ограничения</b><span>Болотная тропа зависит от погоды; конец марта — грачи и «начало русской весны». Мост к календарю природы.</span></div>
+      </div>
+    </section>
+
+    <section id="trebovaniya">
+      <span class="eyebrow">09 · Требования к движку</span>
+      <h2>Что добавили кусты</h2>
+      <ul class="clean">
+        <li>уметь честно отказать, а не строить заведомо нерабочий маршрут;</li>
+        <li>обязательное поле «проверено: дата» и очередь на перепроверку;</li>
+        <li>точка может раздвоиться или измениться — модель переживает это без боли;</li>
+        <li class="o">сезон и погода — полноправные ограничения маршрута;</li>
+        <li>категории объектов должны быть широкими, иначе теряются вещи вроде конезавода.</li>
+      </ul>
+    </section>
+
+    <section id="kategorii">
+      <span class="eyebrow">10 · Категории</span>
+      <h2>Что мы чуть не упустили</h2>
+      <h3>Конвенциональное, что недобрали</h3>
+      <ul class="clean">
+        <li><strong>Где ночевать и где есть</strong> — пока почти не закрыто, а для маршрута на день-два это дыра.</li>
+        <li><strong>Святые источники и родники, смотровые точки, где купить местное</strong> — отдельные классы точек.</li>
+      </ul>
+      <h3>Нетрадиционное — где гид станет особенным</h3>
+      <div class="cards two">
+        <div class="c"><span class="tag o">Места силы</span><h4>Сусанинский следовик</h4><p>Камень с «отпечатками» — поклонный камень меря и славян. Эзотерический туризм.</p></div>
+        <div class="c"><span class="tag s">Заброшки</span><h4>Ракетные точки и Кишино</h4><p>Военные городки в лесах, заброшенная деревня с руинами церкви, заброшенный храм. «Исчезающая Россия».</p></div>
+        <div class="c"><span class="tag g">Активный туризм</span><h4>Моторалли «Путь Сусанина»</h4><p>Внедорожное ориентирование вокруг болота, веломаршруты к озёрам.</p></div>
+        <div class="c"><span class="tag g">Орнитология</span><h4>Птицы болота</h4><p>До 5 тысяч гусей на пролёте весной, краснокнижный большой подорлик. Нишевый экотуризм.</p></div>
+        <div class="c"><span class="tag o">Промыслы как опыт</span><h4>Петровская игрушка, сыр</h4><p>Глиняная свистулька из Петровского; сыроварня Бландова (1878) — начало сыроварения в России.</p></div>
+        <div class="c"><span class="tag r">Тёмный туризм</span><h4>Судьбы и место подвига</h4><p>Гибель Сусанина; судьба Ирины Шафровой — участницы Сопротивления, замученной гестапо.</p></div>
+      </div>
+    </section>
+
+    <section id="baza">
+      <span class="eyebrow">11 · База точек</span>
+      <h2>Сусанинский район</h2>
+      <p class="muted">Рабочая база с сегментацией. Фильтруй по роли и категории, ищи по названию и описанию. Координаты кликабельны.</p>
+
+      <div class="baza-tools">
+        <input class="baza-search" id="ptSearch" type="search" placeholder="Поиск: название, описание, категория…" aria-label="Поиск по базе точек">
+        <div class="chips" id="roleChips"><span class="lab">Роль</span></div>
+        <div class="chips" id="catChips"><span class="lab">Категория</span></div>
+        <div class="count" id="ptCount"></div>
+      </div>
+
+      <div class="chart" id="chart"></div>
+      <div id="points"></div>
+    </section>
+
+    <section id="chestnost">
+      <span class="eyebrow">12 · Честность-лог</span>
+      <h2>Что поправили по ходу</h2>
+      <p class="muted">Эти исправления — не баг, а главная фишка проекта в действии: фактура устаревает и протекает между районами, и база это ловит.</p>
+      <div class="log">
+        <div class="logitem"><b>Музей переехал.</b> Сусанинский краеведческий музей с августа 2025 работает в доме Божедомова, а не в Воскресенской церкви. Почти все путеводители этого ещё не знают.</div>
+        <div class="logitem"><b>«Костромские Пушкины» — не наш район.</b> Музей в Василёве и усадьба Давыдково относятся к Костромскому району, а не Сусанинскому. В базу не вошли.</div>
+        <div class="logitem"><b>Закусочная «Мастер» — не подтверждено.</b> По координатам она в Сусанино, но что работает — подтвердить не удалось. На перекус по маршруту не закладываться.</div>
+        <div class="logitem"><b>«Красная сосна», а не «Красная тропа».</b> Гать на болоте выводит к роднику и Красной сосне — по преданию, месту гибели героя.</div>
+        <div class="logitem"><b>Сохранилась не только Медведки.</b> Усадьба Королятино тоже стоит (дом и флигели), да ещё объект культурного наследия федерального значения.</div>
+      </div>
+    </section>
+
+    <section id="dalshe">
+      <span class="eyebrow">13 · Что дальше</span>
+      <h2>Открытые ветки</h2>
+      <div class="next-grid">
+        <div class="c"><h4>Доуточнить базу</h4><p>Адрес дома Божедомова, работа конезавода «Медведки», координаты усадебных мест и озёр, каталог СПАМИР вып. X по Белозерову и Смольнице.</p></div>
+        <div class="c"><h4>Скелет маршрута</h4><p>Собрать из базы рабочий маршрут «Сусанинские места за день» с таймингом и сметой.</p></div>
+        <div class="c"><h4>Карта куста</h4><p>Разложить всю базу на карте и проверить логистику и границы кустов.</p></div>
+        <div class="c"><h4>Сезонный режим</h4><p>Связать «что делать именно сейчас» с календарём природы (грачи, гуси, цветение орхидей).</p></div>
+      </div>
+    </section>
+
+    <footer>
+      Итоговый отчёт мозгового штурма по проекту регионального путеводителя. Пилот — Сусанинский район. Данные собраны 21 июня 2026 из открытых источников и помечены отметкой «проверено»; перед боевым использованием точки требуют подтверждения.
+    </footer>
+  </main>
+</div>
+<div class="toast" id="toast">Скопировано</div>
+
+<script>
+/* ---------- TOC ---------- */
+const sections=[...document.querySelectorAll('main section, header.hero')].map(s=>({id:s.id,title:(s.querySelector('h1,h2')||{}).textContent||'Начало'}));
+const tocItems=[
+ ['top','Введение'],['kratko','Кратко'],['shema','Схема решения'],['pozic','Позиционирование'],
+ ['arhitektura','Архитектура'],['konstruktor','Конструктор'],['karty','Карты и расчёты'],
+ ['smeta','Смета и тайминг'],['kusty','Проверка на кустах'],['trebovaniya','Требования к движку'],
+ ['kategorii','Категории'],['baza','База точек'],['chestnost','Честность-лог'],['dalshe','Что дальше']
+];
+function buildTOC(target){
+  const ol=document.createElement('ol');
+  tocItems.forEach(([id,t])=>{
+    const li=document.createElement('li');
+    li.innerHTML=`<a href="#${id}" data-id="${id}">${t}</a>`;
+    ol.appendChild(li);
+  });
+  target.innerHTML='';target.appendChild(ol);
+}
+const tocNav=document.getElementById('toc');buildTOC(tocNav);
+
+/* drawer (mobile) */
+const drawer=document.getElementById('drawer');
+drawer.innerHTML='<div class="search"><input id="tocSearch2" type="search" placeholder="Поиск по словам…"></div><nav class="toc" id="toc2"></nav>';
+buildTOC(document.getElementById('toc2'));
+const menuBtn=document.getElementById('menuBtn');
+menuBtn.addEventListener('click',()=>{const o=drawer.classList.toggle('open');menuBtn.setAttribute('aria-expanded',o)});
+drawer.addEventListener('click',e=>{if(e.target.closest('a'))drawer.classList.remove('open')});
+
+/* TOC search filter */
+function wireTocSearch(inputId,navId){
+  const inp=document.getElementById(inputId);if(!inp)return;
+  const run=()=>{
+    const q=inp.value.trim().toLowerCase();
+    document.querySelectorAll('#'+navId+' li').forEach(li=>{
+      const a=li.querySelector('a');if(!a)return;
+      const sec=document.getElementById(a.dataset.id);
+      const titleMatch=li.textContent.toLowerCase().includes(q);
+      const bodyMatch=sec?sec.textContent.toLowerCase().includes(q):false;
+      li.classList.toggle('hide', !!q && !(titleMatch||bodyMatch));
+    });
+  };
+  inp.addEventListener('input',run);
+  inp.addEventListener('keydown',e=>{
+    if(e.key==='Enter'){
+      const first=document.querySelector('#'+navId+' li:not(.hide) a');
+      if(first){const t=document.getElementById(first.dataset.id);if(t)t.scrollIntoView({behavior:'smooth',block:'start'});}
+    }
+  });
+}
+wireTocSearch('tocSearch','toc');wireTocSearch('tocSearch2','toc2');
+
+/* scrollspy */
+const links=[...document.querySelectorAll('nav.toc a')];
+const byId={};links.forEach(a=>{(byId[a.dataset.id]=byId[a.dataset.id]||[]).push(a)});
+const obs=new IntersectionObserver((entries)=>{
+  entries.forEach(en=>{
+    if(en.isIntersecting){
+      links.forEach(a=>a.classList.remove('active'));
+      (byId[en.target.id]||[]).forEach(a=>a.classList.add('active'));
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+document.querySelectorAll('main section, header.hero').forEach(s=>obs.observe(s));
+
+/* ---------- pipeline diagram ---------- */
+const flowNodes=[
+ ['found','Фундамент · База Точек','Атом системы: одна точка = один объект на карте, с единым набором полей.'],
+ ['honest','Честный слой','Туалеты, заправки, связь, состояние дорог, наличные — вшиты в каждую точку.'],
+ ['group','Кусты','Куски размером в день; у каждой точки роль: якорь, спутник, запас, служебное.'],
+ ['calc','Таблица расстояний','Посчитана один раз, хранится у себя → расчёты мгновенны и работают офлайн.'],
+ ['engine','Конструктор (движок)','Считает дорогу и деньги. Вход: дни, кто едет, транспорт, бюджет, интерес. Два режима.'],
+ ['result','Готовый маршрут','Пошаговый тайминг + смета вилкой (бензин на компанию, входные на каждого).'],
+ ['out','Выдача','Один контент → сайт, офлайн-приложение, PDF-путеводитель, телеграм-бот.'],
+ ['map','Карты Яндекс','Показ карты и кнопка «поехали». Внутренние расчёты — на своей таблице.']
+];
+const flow=document.getElementById('flow');
+flowNodes.forEach((n,i)=>{
+  const d=document.createElement('div');d.className='node '+n[0];
+  d.innerHTML=`<div class="nt">${n[1]}</div><div class="nd">${n[2]}</div>`;
+  flow.appendChild(d);
+  if(i<flowNodes.length-1){const a=document.createElement('div');a.className='arrow';flow.appendChild(a)}
+});
+
+/* ---------- mode toggle ---------- */
+document.querySelectorAll('.toggle button').forEach(b=>{
+  b.addEventListener('click',()=>{
+    document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');
+    document.getElementById('m-ready').classList.toggle('on',b.dataset.mode==='ready');
+    document.getElementById('m-self').classList.toggle('on',b.dataset.mode==='self');
+  });
+});
+
+/* ---------- база точек ---------- */
+const ROLES={anchor:'Якорь',companion:'Спутник',reserve:'Запас',service:'Служебное'};
+const CATS={religion:'Религия и храмы',museum:'Музеи',history:'История и мемориалы',estate:'Усадьбы',nature:'Природа',agro:'Агротуризм',crafts:'Ремёсла и промыслы',gastro:'Гастрономия',infra:'Инфраструктура',abandoned:'Заброшки',power:'Места силы'};
+const STAT={ok:'проверено',moved:'переехал',unconfirmed:'не подтверждено',lost:'не сохранилось',lead:'зацепка'};
+
+const POINTS=[
+ {n:'Воскресенская церковь «Грачи прилетели»',role:'anchor',cat:'religion',st:'ok',coords:'58.14686, 41.58383',place:'пгт Сусанино, ул. Советская, 33а',desc:'Храм 1690 года, изображённый Саврасовым на «Грачи прилетели». Возвращён Церкви, возобновлены богослужения, установлены колокола — экскурсии включают звон.',honest:'Внутрь и звон — через приход; реставрация не завершена (не раньше 2028).'},
+ {n:'Сусанинский краеведческий музей',role:'anchor',cat:'museum',st:'moved',coords:'≈58.1468, 41.5838',place:'дом Божедомова (адрес уточнить)',desc:'Подвиг Сусанина, диорама, находки Исуповского некрополя. Филиал Костромского музея-заповедника. Вход ~120 ₽, экскурсия ~600 ₽.',honest:'С августа 2025 переехал из Воскресенской церкви в дом Божедомова — старые гиды врут.'},
+ {n:'Исуповское болото и памятный камень',role:'anchor',cat:'nature',st:'ok',coords:'58.16741, 41.74523',place:'~5 км от Сусанино, у Домнино',desc:'Место подвига и ООПТ федерального значения (заказник с 1973). Котловина ~12×4,2 км, 13 краснокнижных растений (орхидеи), до 5 тыс. гусей весной, большой подорлик. Гать >2 км к роднику и Красной сосне.',honest:'Связи нет, еды и туалетов нет, сезон и погода критичны; с гати не сходить.'},
+ {n:'Домнино: монастырь и Успенская церковь',role:'companion',cat:'religion',st:'ok',coords:'58.16516, 41.69038',place:'с. Домнино, ул. Центральная, 21',desc:'Вотчина инокини Марфы, матери Михаила Романова. Женский монастырь Царственных страстотерпцев (2004). Крест — предполагаемое место захоронения Сусанина.',honest:'Действующий монастырь — нужна скромная одежда.'},
+ {n:'Часовня Иоанна Предтечи, Деревеньки',role:'companion',cat:'history',st:'ok',coords:'58.19248, 41.68221',place:'д. Деревеньки',desc:'Родина Сусанина. Часовня 1913 года к 300-летию подвига на предполагаемом месте его дома. Сама деревня не сохранилась.',honest:'Только на машине; от часовни идёт тропа к д. Холм.'},
+ {n:'Конный завод «Медведки»',role:'companion',cat:'agro',st:'unconfirmed',coords:'58.07574, 41.49789',place:'д. Медведки (~50 км от Костромы)',desc:'Завод 1891 года; манеж шатрового типа в стиле модерн — единственный в России. Орловский рысак и тяжеловоз. Экскурсии, верховая езда, иппотерапия, выезды на озёра.',honest:'Юрлицо ликвидировано 13.01.2026 — перед визитом созвониться.'},
+ {n:'Усадьба Бартеневых, Медведки',role:'reserve',cat:'estate',st:'ok',coords:'≈58.0757, 41.4979',place:'рядом с конезаводом',desc:'Известна с XVI века; парковый ансамбль создал Семён Андреевич Бартенев (1776–1832), затем Юреневы. Сохранились развалины и старый парк.',honest:'Руины; удобно совмещать с конезаводом.'},
+ {n:'Усадьба Королятино',role:'companion',cat:'estate',st:'ok',coords:'на краю болота (уточнить)',place:'Сусанинский район',desc:'Известна с XVII века; род Пановых владел до 1918. Комплекс 1–2-й четвертей XIX века: главный дом с мезонином и два флигеля. Объект культурного наследия федерального значения.',honest:'Сохранилась лучше прочих — но это не Медведки, прежняя оговорка поправлена.'},
+ {n:'Памятник Ивану Сусанину, Сусанино',role:'reserve',cat:'history',st:'ok',coords:'58.15076, 41.59910',place:'центр Сусанино',desc:'Памятник народному герою — копия костромского.',honest:''},
+ {n:'Гостиный двор (Торговые ряды)',role:'reserve',cat:'history',st:'ok',coords:'58.14931, 41.58247',place:'центр Сусанино',desc:'Купеческие торговые ряды конца XIX века. Молвитино было центром шапочного промысла.',honest:''},
+ {n:'Дом купца Осипова',role:'reserve',cat:'history',st:'ok',coords:'58.14807, 41.58768',place:'центр Сусанино',desc:'Особняк торговца-шапочника конца XIX века: изразцовые печи, лепнина, росписи, парадная лестница.',honest:'Доступ внутрь уточнять.'},
+ {n:'Усадьбы Царёвых и Сутягиных',role:'reserve',cat:'estate',st:'ok',coords:'58.14929, 41.58487',place:'центр Сусанино',desc:'Две купеческие усадьбы конца XIX века. Дом Сутягиных с лавками позже служил волостным правлением.',honest:''},
+ {n:'Трактиры Потехина и Чабурина',role:'reserve',cat:'history',st:'ok',coords:'58.14715, 41.58633',place:'центр Сусанино',desc:'Здания трактиров середины — конца XIX века, часть исторической торговой застройки.',honest:''},
+ {n:'Храм Покрова Пресвятой Богородицы',role:'companion',cat:'religion',st:'ok',coords:'≈58.14685, 41.58827',place:'пгт Сусанино, ул. Крупской, 22',desc:'Действующий приходской храм посёлка (Вознесенско-Покровская церковь).',honest:'Статус «единственного действующего» мог устареть после возрождения Воскресенской.'},
+ {n:'Троицкая церковь (1904)',role:'reserve',cat:'abandoned',st:'lost',coords:'58.15382, 41.59716',place:'Сусанино',desc:'Псевдорусский стиль, построена в 1904 на месте кладбища, закрыта в 1930-х. Заброшена.',honest:'Только внешний осмотр, внутрь не заходить.'},
+ {n:'Дом народных ремёсел «Берегиня»',role:'reserve',cat:'crafts',st:'ok',coords:'уточнить',place:'пгт Сусанино',desc:'Мастер-классы и народные ремёсла; здесь идёт программа праздника «Герасим Грачевник».',honest:'По записи или расписанию — уточнить.'},
+ {n:'Мемориал Великой Отечественной войны',role:'reserve',cat:'history',st:'ok',coords:'58.14925, 41.59059',place:'центр Сусанино',desc:'Мемориал в центре посёлка.',honest:''},
+ {n:'Свято-Троицкий монастырь, Сумароково',role:'reserve',cat:'religion',st:'ok',coords:'58.20832, 41.79117',place:'с. Сумароково',desc:'Женская обитель, основана как богадельня в 1870, монастырь с 1893. Дальняя точка на северо-востоке.',honest:'Не путать с Сумароковской лосефермой — та в Красносельском районе.'},
+ {n:'Кишинское озеро',role:'reserve',cat:'nature',st:'ok',coords:'58.072975, 41.385457',place:'лес у Медведок',desc:'Карстовое лесное озеро среди боров-беломошников, ~42–44 га. Деревня Кишино заброшена, сохранились остатки Рождественской церкви.',honest:'Только внедорожник или велосипед; связи нет.'},
+ {n:'Медвежье и Харинское озёра',role:'reserve',cat:'nature',st:'lead',coords:'уточнить',place:'лес северо-восточнее Медведок',desc:'Лесные озёра в связке с Кишинским; туристско-рыбацкие маршруты.',honest:'Глухой лес, координаты уточнить.'},
+ {n:'Щелочное озеро',role:'reserve',cat:'nature',st:'lead',coords:'уточнить',place:'через Медведки',desc:'По описанию конезавода — «озеро-легенда без дна» с плавающими островами.',honest:'Доступ организованно через конезавод; детали не подтверждены.'},
+ {n:'Автостанция «Сусанино»',role:'service',cat:'infra',st:'ok',coords:'58.15346, 41.61285',place:'трасса Кострома–Буй',desc:'Автобусы Кострома–Сусанино и проходящие на Буй. До музея ~1200 м пешком.',honest:'До Сусанино автобусом можно; по району — только на машине.'},
+ {n:'Закусочная «Мастер»',role:'service',cat:'infra',st:'unconfirmed',coords:'58.15071, 41.59798',place:'пгт Сусанино',desc:'Единственный найденный пункт питания на маршруте. По координатам — в Сусанино.',honest:'Работу заведения подтвердить не удалось; на перекус не закладываться.'},
+ {n:'Утраченные усадьбы района',role:'reserve',cat:'estate',st:'lost',coords:'разные деревни',place:'Бухарино, Высоки, Б. Завражье, Козино, Носково',desc:'Шафровых (потомок — участница Сопротивления), Жадовских «Высоки» (родина адмирала Ивашинцева), Пархомова, Такутьевых (костромские Пушкины), Голенищевых-Кутузовых.',honest:'Не сохранились — краеведческий слой, не объекты показа.'},
+ {n:'Усадьбы Белозерово и Смольница',role:'reserve',cat:'estate',st:'lead',coords:'уточнить',place:'Сусанинский район',desc:'Загородные усадьбы района, описаны в своде «Памятники архитектуры Костромской области», вып. X (2008).',honest:'В открытых источниках деталей нет — смотреть каталог СПАМИР.'},
+ {n:'Сыроварня Бландова, Андреевское',role:'reserve',cat:'gastro',st:'lost',coords:'с. Андреевское',place:'Сусанинский район',desc:'Заработала в 1878 году; по преданию, с неё началось промышленное сыроварение в России.',honest:'Историческая точка/сюжет, а не объект показа.'},
+ {n:'Сусанинский следовик',role:'reserve',cat:'power',st:'lead',coords:'уточнить',place:'Сусанинский район',desc:'Камень с «отпечатками» человека и зверя — считается поклонным камнем племени меря, затем славян.',honest:'Места силы; точные координаты и доступ уточнить.'},
+ {n:'Ракетные точки в лесах',role:'reserve',cat:'abandoned',st:'lead',coords:'уточнить',place:'лесные массивы района',desc:'Советские ракетные точки — небольшие военные городки, стоявшие на дежурстве в лесах района.',honest:'Заброшено; доступ и безопасность уточнять.'},
+ {n:'Петровская игрушка (д. Петровское)',role:'reserve',cat:'crafts',st:'lead',coords:'уточнить',place:'д. Петровское',desc:'Глиняная игрушка-свистулька родом из деревни Петровское Сусанинского района.',honest:'Промысел и мастер-классы — уточнить.'}
+];
+
+const state={q:'',role:'all',cat:'all'};
+const pointsEl=document.getElementById('points');
+const countEl=document.getElementById('ptCount');
+const chartEl=document.getElementById('chart');
+
+/* chips */
+function chip(label,val,group){const b=document.createElement('button');b.className='chip'+(state[group]===val?' on':'');b.textContent=label;b.dataset.val=val;b.dataset.group=group;return b}
+const roleChips=document.getElementById('roleChips'),catChips=document.getElementById('catChips');
+roleChips.appendChild(chip('Все','all','role'));
+Object.entries(ROLES).forEach(([k,v])=>roleChips.appendChild(chip(v,k,'role')));
+catChips.appendChild(chip('Все','all','cat'));
+Object.entries(CATS).forEach(([k,v])=>catChips.appendChild(chip(v,k,'cat')));
+document.querySelectorAll('.chip').forEach(c=>c.addEventListener('click',()=>{
+  state[c.dataset.group]=c.dataset.val;
+  document.querySelectorAll('.chip[data-group="'+c.dataset.group+'"]').forEach(x=>x.classList.toggle('on',x.dataset.val===c.dataset.val));
+  render();
+}));
+document.getElementById('ptSearch').addEventListener('input',e=>{state.q=e.target.value.trim().toLowerCase();render()});
+
+function filtered(){
+  return POINTS.filter(p=>{
+    if(state.role!=='all'&&p.role!==state.role)return false;
+    if(state.cat!=='all'&&p.cat!==state.cat)return false;
+    if(state.q){const hay=(p.n+' '+p.desc+' '+CATS[p.cat]+' '+ROLES[p.role]+' '+p.place).toLowerCase();if(!hay.includes(state.q))return false}
+    return true;
+  });
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function render(){
+  const list=filtered();
+  countEl.innerHTML=`Показано <b>${list.length}</b> из ${POINTS.length} точек`;
+  // chart by category
+  const counts={};Object.keys(CATS).forEach(k=>counts[k]=0);list.forEach(p=>counts[p.cat]++);
+  const max=Math.max(1,...Object.values(counts));
+  chartEl.innerHTML=Object.entries(CATS).filter(([k])=>counts[k]>0).sort((a,b)=>counts[b[0]]-counts[a[0]]).map(([k,v])=>
+    `<div class="bar"><div class="bn">${v}</div><div class="bt" style="width:${counts[k]/max*100}%"></div><div class="bv">${counts[k]}</div></div>`).join('');
+  // cards
+  if(!list.length){pointsEl.innerHTML='<div class="empty">Ничего не нашлось. Сбрось фильтры или измени запрос.</div>';return}
+  pointsEl.innerHTML=list.map(p=>`
+    <article class="pt">
+      <div class="pt-top">
+        <span class="badge b-${p.role}">${ROLES[p.role]}</span>
+        <span class="cat">${CATS[p.cat]}</span>
+        <span class="st ${p.st}">${STAT[p.st]}</span>
+      </div>
+      <h4>${esc(p.n)}</h4>
+      <div class="desc">${esc(p.desc)}</div>
+      <div class="meta">
+        <div class="row"><b>Где:</b> ${esc(p.place)}</div>
+        <div class="row"><b>Координаты:</b> <span class="coord" data-c="${esc(p.coords)}">${esc(p.coords)}</span></div>
+      </div>
+      ${p.honest?`<div class="honest">${esc(p.honest)}</div>`:''}
+    </article>`).join('');
+  pointsEl.querySelectorAll('.coord').forEach(c=>c.addEventListener('click',()=>copy(c.dataset.c)));
+}
+function copy(t){
+  if(/уточнить|разные|край|лес|трасса|центр|с\.|д\.|через/.test(t)&&!/\d/.test(t)){toast('Координаты ещё не уточнены');return}
+  navigator.clipboard&&navigator.clipboard.writeText(t).then(()=>toast('Скопировано: '+t)).catch(()=>toast(t));
+}
+let tT;function toast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),1600)}
+render();
+</script>
+</body>
+</html>
